@@ -23,10 +23,10 @@ pub async fn purge(
     let cid = ctx.channel_id();
     let to_delete = num.unwrap() + 1;
     let msgs = cid
-        .messages(&ctx, GetMessages::new().limit(to_delete))
+        .messages(ctx, GetMessages::new().limit(to_delete))
         .await?;
 
-    cid.delete_messages(&ctx.http(), msgs).await?;
+    cid.delete_messages(ctx.http(), msgs).await?;
 
     Ok(())
 }
