@@ -1,12 +1,26 @@
+use core::fmt::{Debug, Display};
 use std::sync::Arc;
 
-use poise::serenity_prelude as serenity;
+use poise::{FrameworkError, serenity_prelude as serenity};
 
 mod commands;
 
 struct Data {} // User data, which is stored and accessible in all command invocations
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
+
+async fn c_on_error<U, E: Display + Debug>(error: FrameworkError<'_, U, E>) {
+    match error {
+        FrameworkError::ArgumentParse { error, ctx, .. } => {
+            let _ = ctx.say(format!("DEV NOTE: {}", error.to_string())).await;
+        }
+        _ => {
+            if let Err(e) = poise::builtins::on_error(error).await {
+                eprintln!("Fatal error while sending error message: {}", e);
+            }
+        }
+    }
+}
 
 #[tokio::main]
 async fn main() {
@@ -24,7 +38,13 @@ async fn main() {
                 case_insensitive_commands: true,
                 ..Default::default()
             },
-            commands: vec![commands::ping::ping()],
+            commands: vec![
+                commands::utility::ping::ping(),
+                commands::utility::help::help(),
+                commands::utility::avatar::avatar(),
+                commands::utility::purge::purge(),
+            ],
+            on_error: |error| Box::pin(c_on_error(error)),
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {
