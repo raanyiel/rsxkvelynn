@@ -6,8 +6,7 @@ use serenity::all::GetMessages;
 pub async fn purge(
     ctx: Context<'_>,
     #[description = "Number of messages"]
-    #[max = 99]
-    #[min = 1]
+    #[rename = "1-99"]
     num: Option<u8>,
 ) -> Result<(), Error> {
     if num.is_none() {
