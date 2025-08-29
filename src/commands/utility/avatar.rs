@@ -8,14 +8,19 @@ pub async fn avatar(
     ctx: Context<'_>,
     #[description = "Selected user"] user: Option<serenity::User>,
 ) -> Result<(), Error> {
-    if user.is_none() {
-        ctx.say("Need to specify a single user!").await?;
-        return Ok(());
-    }
+    let user = match user.as_ref() {
+        Some(x) => x,
+        None => {
+            ctx.say("Need to specify a single user!").await?;
+            return Ok(());
+        }
+    };
 
-    let u = user.as_ref().unwrap();
-    ctx.say(u.avatar_url().unwrap_or("Couldn't find URL :(".to_string()))
-        .await?;
+    ctx.say(
+        user.avatar_url()
+            .unwrap_or("Couldn't find URL :(".to_string()),
+    )
+    .await?;
 
     Ok(())
 }
