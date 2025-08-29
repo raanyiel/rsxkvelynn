@@ -24,7 +24,7 @@ async fn c_on_error<U, E: Display + Debug>(error: FrameworkError<'_, U, E>) {
 
 #[tokio::main]
 async fn main() {
-    let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
+    let token = std::env::var("DISCORD_TOKEN").expect("env variable DISCORD_TOKEN missing");
     let intents =
         serenity::GatewayIntents::non_privileged() | serenity::GatewayIntents::MESSAGE_CONTENT;
 
