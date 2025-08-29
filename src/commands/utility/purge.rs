@@ -1,5 +1,5 @@
 use crate::{Context, Error};
-use serenity::all::GetMessages;
+use poise::serenity_prelude::all::GetMessages;
 
 ///Deletes (up to) the most recent 100 messages
 #[poise::command(prefix_command, track_edits, discard_spare_arguments)]
@@ -10,17 +10,17 @@ pub async fn purge(
     num: Option<u8>,
 ) -> Result<(), Error> {
     let to_delete = match num {
-        Some(x) => {
-            if x > 99 {
+        Some(x) => match x {
+            100.. => {
                 ctx.say("Too many messages; Discord API only allows fetching 100 messages at a time (99 including the purge command).").await?;
                 return Ok(());
-            } else if x < 1 {
+            }
+            ..1 => {
                 ctx.say("Um.. what?").await?;
                 return Ok(());
-            } else {
-                x + 1
             }
-        }
+            1..=99 => x + 1,
+        },
         None => {
             ctx.say("Need to specify number of messages to delete")
                 .await?;
