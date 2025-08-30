@@ -33,7 +33,7 @@ pub async fn purge(
         .messages(ctx, GetMessages::new().limit(to_delete))
         .await?;
 
-    cid.delete_messages(ctx.http(), msgs).await?;
+    cid.delete_messages(ctx, msgs).await?;
 
     Ok(())
 }
